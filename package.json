@@ -1,0 +1,33 @@
+{
+  "name": "nodejs-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "art-template": "^4.12.2",
+    "blueimp-md5": "^2.10.0",
+    "bootstrap": "^3.3.7",
+    "express-art-template": "^1.0.0",
+    "express": "^4.16.2",
+    "formidable": "^1.1.1",
+    "express-session": "^1.15.6",
+    "jquery": "^3.2.1",
+    "mysql": "^2.15.0",
+    "moment": "^2.19.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KKslide/nodeJs-learning.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KKslide/nodeJs-learning/issues"
+  },
+  "homepage": "https://github.com/KKslide/nodeJs-learning#readme"
+}
