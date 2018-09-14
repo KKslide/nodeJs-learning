@@ -10,7 +10,17 @@
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
     <style>
         .hero-list img {
-            width: 50px;
+            width: 100px;
+        }
+        .hero-list .inputBox{
+            width: 100px;
+            height: 35px;
+            line-height: 35px;
+            text-align: center;
+            border-radius: 5px;
+            background-color: #dadada;
+            color: #666;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -35,7 +45,13 @@
                 </tr>
                 <tr>
                     <td>头像：</td>
-                    <td><img src="" alt="" id="photo"><input type="file" name="img" id="img"></td>
+                    <td>
+                        <label for="img">
+                            <div class="inputBox">选择文件</div>
+                        </label>
+                        <input type="file" name="img" id="img" style="display:none;">
+                        <img src="" alt="" id="photo">
+                    </td>
                 </tr>
                 <tr>
                     <td></td>
@@ -47,6 +63,70 @@
     </div>
 
     <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script>
+        $("#img").on("change", function () {
+            var file = this.files[0];
+            var read = new FileReader() // 创建FileReader对像;
+            read.readAsDataURL(file) // 调用readAsDataURL方法读取文件;
+            read.onload = function () {
+                url = this.result;
+                $("#photo").attr("src", url);
+            }
+            // ----------
+            var formdata = new FormData();
+            formdata.append("name", "kk");
+            formdata.append("img", file);
+            // console.log(formdata);
+            // console.log(formdata.values());
+            // console.log(formdata.get("name"));
+            // console.log(formdata.get("img"));
+            // var data = $("form").serialize();
+            // console.log(data);
+
+            // 上传图片
+            $.ajax({
+                url: "/postUpload",
+                type: "POST",
+                data: formdata,
+                processData: false,
+                contentType: false,
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 1) {
+                        console.log(result);
+                        $("#photo").attr("src", "/images/" + result.path);
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        });
+
+        $("#sub").on("click", function (e) {
+            e.preventDefault();
+            var data = $("form").serialize();
+            data = data + "&img=" + $("#photo").attr("src");
+            console.log(data);
+
+            $.ajax({
+                url: "/add",
+                type: "POST",
+                data: data,
+                dataType: "json",
+                success: function (res) {
+                    console.log(res);
+                    if (res.code === 1) {
+                        alert(res.msg);
+                        window.location.href = "/";
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+        })
+    </script>
 </body>
 
 </html>
