@@ -35,11 +35,17 @@ server.on('request', (request, response) => {
     var method = request.method;
     console.log('URL请求:' + url, '请求方式:' + method);
     if (url === '/' || url === '/index') {
-        fs.readFile(__dirname + '/data/data.json', (err, data) => {
+        // 读取文件方式
+        // fs.readFile(__dirname + '/data/data.json', (err, data) => {
+        //     if (err) return response.end("发生错误！稍后重试！");
+        //     var html = template(__dirname + "/views/index.html", JSON.parse(data.toString()));
+        //     response.end(html);
+        // });
+        // 接口方式,返回json数据
+        fs.readFile(__dirname + "/views/index.html", (err, data) => {
             if (err) return response.end("发生错误！稍后重试！");
-            var html = template(__dirname + "/views/index.html", JSON.parse(data.toString()));
-            response.end(html);
-        });
+            response.end(data);
+        })
     }
     // 接口
     if (url === "/page" && method === "GET") {
@@ -170,5 +176,9 @@ server.on('request', (request, response) => {
                 })
             })
         })
+    }
+    // 修改数据
+    else if (url === "/edit" && method === "POST") {
+
     }
 });

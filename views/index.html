@@ -8,9 +8,13 @@
     <title>Hero - Admin</title>
     <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../node_modules/bootoast/dist/bootoast.min.css">
     <style>
+        .hero-list a {
+            text-decoration: none;
+        }
         .hero-list img {
-            width: 50px;
+            /* width: 50px; */
             height: 50px;
             display: block
         }
@@ -19,76 +23,143 @@
             height: 50px;
             line-height: 50px;
         }
+        .btn{
+            padding: 2px 4px;
+        }
+        #tbody tr:nth-child(1)>td:last-child{
+            border-top: none;
+        }
     </style>
 </head>
 
 <body>
+    <!-- <div class="alert alert-warning alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Warning!</strong> Better check yourself, you're not looking too good.
+    </div> -->
     <header>
         <div class="page-header container">
-            <h1>王者荣耀 <small>英雄管理器</small></h1>
+            <h1>HEROS <small>manager</small></h1>
         </div>
     </header>
     <div class="container hero-list">
-        <a class="btn btn-success pull-right" href="/add">添加英雄</a>
+        <a class="btn btn-success pull-right" href="/add">Add</a>
         <table class="table table-hover">
             <thead>
-                <th>编号</th>
-                <th>名称</th>
-                <th>性别</th>
-                <th>头像</th>
-                <th>操作</th>
+                <th>NO</th>
+                <th>Name</th>
+                <th>Gender</th>
+                <th>Avatar</th>
+                <th>Options</th>
             </thead>
             <tbody id="tbody">
-                {{each heros}}
-                <tr>
-                    <td>{{$index+1}}</td>
-                    <td>{{$value.name}}</td>
-                    <td>{{$value.gender}}</td>
-                    <td><img src="{{$value.img}}" /></td>
-                    <td>
-                        <a href="javascript:;" class="edit" data-id="{{$value.id}}">修改</a>
-                        <a href="javascript:;" class="del" data-id="{{$value.id}}">删除</a>
-                    </td>
-                </tr>
-                {{/each}}
+                <script id="list" type="text/html">
+                    {{each heros}}
+                    <tr>
+                        <td>{{$index+1}}</td>
+                        <td>{{$value.name}}</td>
+                        <td>{{$value.gender}}</td>
+                        <td><img src="{{$value.img}}" /></td>
+                        <td style="display:flex;">
+                            <a href="javascript:;" class="edit" data-id="{{$value.id}}">
+                                <button type="button" class="btn btn-warning">Edit</button>
+                            </a>
+                            &nbsp;
+                            <a href="javascript:;" class="del">
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal"
+                                    data-name="{{$value.name}}" data-id="{{$value.id}}">Delete</button>
+                            </a>
+                        </td>
+                    </tr>
+                    {{/each}}
+                </script>
             </tbody>
         </table>
     </div>
+
+    <!-- 删除模态框 -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!-- <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                </div> -->
+                <div class="modal-body" style="text-align:center;">
+                    Are you sure about deletting <span class="delete-name" style="color:red;"></span> ?
+                </div>
+                <div class="modal-footer" style="text-align:center;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger deleteBtn" data-dismiss="modal">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../node_modules/art-template/lib/template-web.js"></script>
     <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="../node_modules/bootoast/dist/bootoast.min.js"></script>
     <script>
         $(function () {
+            getList();
+        });
+        function getList() {
             $.ajax({
                 url: "/page",
                 dataType: "json",
                 success: function (res) {
                     console.log(res);
+                    var html = template("list", res);
+                    $("#tbody").html(html);
                 }
             })
-        })
-        $(document).delegate(".del", "click", function (e) {
+        }
+
+        $('#deleteModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var recipient = button.data('name') // Extract info from data-* attributes
+            var id = button.data("id")
+            var modal = $(this)
+            modal.find('.delete-name').text(recipient)
+            modal.find(".deleteBtn").attr("data-id", id)
+        });
+
+        $(document).delegate(".deleteBtn", "click", function (e) {
             e.preventDefault();
-            var isDelete = confirm("你真的要删除该条数据吗？");
-            if (isDelete) {
-                var dataId = { "id": $(this).data('id') };
-                var _this = $(this);
-                $.ajax({
-                    url: "/del",
-                    type: "POST",
-                    data: dataId,
-                    dataType: "json",
-                    success: function (res) {
-                        console.log(res);
-                        if (res.code === 1) {
-                            alert(res.msg);
-                            _this.parent().parent().remove();
-                        }
+            var dataId = parseInt(this.getAttribute('data-id'));
+            $.ajax({
+                url: "/del",
+                type: "POST",
+                data: { "id": dataId },
+                dataType: "json",
+                success: function (res) {
+                    console.log(res);
+                    if (res.code === 1) {
+                        bootoast.toast({
+                            message: res.msg,
+                            type: 'success',
+                            position: 'top',
+                            icon: null,
+                            timeout: 2,
+                            animationDuration: 300,
+                            dismissible: false
+                        });
+                        getList();
                     }
-                })
-            }
+                }
+            });
         });
 
         $(document).delegate(".edit", "click", function (e) {
-
+            bootoast.toast({
+                message: 'Bootoast!',
+                type: 'success',
+                position: 'top',
+                icon: null,
+                timeout: 2,
+                animationDuration: 300,
+                dismissible: false
+            });
         })
     </script>
 </body>
