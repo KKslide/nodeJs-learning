@@ -9,6 +9,7 @@
     <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="../node_modules/bootoast/dist/bootoast.min.css">
+    <link rel="stylesheet" href="../node_modules/bootstrapvalidator/dist/css/bootstrapValidator.min.css">
     <style>
         .hero-list a {
             text-decoration: none;
@@ -29,6 +30,19 @@
         #tbody tr:nth-child(1)>td:last-child{
             border-top: none;
         }
+        .modal-body form{
+            /* width: 100px;
+            height: 35px;
+            line-height: 35px;
+            text-align: center;
+            border-radius: 5px;
+            background-color: #dadada;
+            color: #666;
+            cursor: pointer; */
+        }
+        .modal-body form img{
+            width: 100px;
+        }
     </style>
 </head>
 
@@ -43,7 +57,8 @@
         </div>
     </header>
     <div class="container hero-list">
-        <a class="btn btn-success pull-right" href="/add">Add</a>
+        <a class="btn btn-success pull-right" href="javacript:void(0);" data-toggle="modal" data-target="#editModal"
+            data-type="add">Add</a>
         <table class="table table-hover">
             <thead>
                 <th>NO</th>
@@ -61,13 +76,16 @@
                         <td>{{$value.gender}}</td>
                         <td><img src="{{$value.img}}" /></td>
                         <td style="display:flex;">
-                            <a href="javascript:;" class="edit" data-id="{{$value.id}}">
-                                <button type="button" class="btn btn-warning">Edit</button>
+                            <a href="javascript:;" class="edit">
+                                <!-- onclick="Edit({{$value.id}})" -->
+                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal" 
+                                data-id="{{$value.id}}" data-type="edit">Edit</button>
                             </a>
                             &nbsp;
                             <a href="javascript:;" class="del">
                                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal"
-                                    data-name="{{$value.name}}" data-id="{{$value.id}}">Delete</button>
+                                data-name="{{$value.name}}" 
+                                data-id="{{$value.id}}">Delete</button>
                             </a>
                         </td>
                     </tr>
@@ -95,12 +113,72 @@
             </div>
         </div>
     </div>
+
+    <!-- 编辑模态框 -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myEditModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myEditModal" style="text-align: center;"></h4>
+                </div>
+                <div class="modal-body" style="text-align:center;">
+                    <style> #myform .fr{float: right;} #myForm>.table{margin-bottom: 0;}</style>
+                    <form enctype="multipart/form-data" id="myForm" class="required-validate">
+                        <table class="table table-hover">
+                            <tr>
+                                <td class="col-sm-3 col-xs-3 col md-3">姓名：</td>
+                                <td class="col-sm-6 col-xs-6 col md-6" style="text-align:left;">
+                                    <input type="text" name="name" required data-bv-notempty-message="can not be empty !">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-sm-3 col-xs-3 col md-3">性别：</td>
+                                <td class="col-sm-6 col-xs-6 col md-6" style="text-align:left;"><input id="nan" name="gender"
+                                        value="男" type="radio"><label for="nan">男</label>
+                                    <input name="gender" value="女" type="radio" id="nv"><label for="nv">女</label></td>
+                            </tr>
+                            <tr>
+                                <td class="col-sm-3 col-xs-3 col md-3">头像：</td>
+                                <td class="col-sm-6 col-xs-6 col md-6" style="text-align:left;">
+                                    <label for="img">
+                                        <div class="inputBox">选择文件</div>
+                                    </label>
+                                    <input type="file" name="img" id="img" style="display:none;">
+                                    <img src="" alt="" id="photo">
+                                </td>
+                            </tr>
+                            <!-- <tr>
+                                <td></td>
+                                <td><input type="submit" id="sub"></td>
+                            </tr> -->
+                        </table>
+                    </form>
+                </div>
+                <div class="modal-footer" style="text-align:center;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger editOption">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="../node_modules/art-template/lib/template-web.js"></script>
     <script src="../node_modules/jquery/dist/jquery.min.js"></script>
     <script src="../node_modules/bootstrap/dist/js/bootstrap.js"></script>
     <script src="../node_modules/bootoast/dist/bootoast.min.js"></script>
+    <script src="../node_modules/bootstrapvalidator/dist/js/bootstrapValidator.min.js"></script>
+    <!-- <script src="../node_modules/bootstrapvalidator/dist/js/language/zh_CN.js"></script> -->
     <script>
         $(function () {
+            // $("#myForm").each(function () {
+            //     var $form = $(this);
+            //     $form.bootstrapValidator();
+            //     $form.on('success.form.bv', function (e) {
+            //         // Prevent form submission
+            //         e.preventDefault();
+            //     });
+            // })
             getList();
         });
         function getList() {
@@ -109,12 +187,14 @@
                 dataType: "json",
                 success: function (res) {
                     console.log(res);
+                    window.localStorage.setItem("herosData", JSON.stringify(res.heros));
                     var html = template("list", res);
                     $("#tbody").html(html);
                 }
             })
         }
 
+        /* 删除模块展示前 */
         $('#deleteModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget) // Button that triggered the modal
             var recipient = button.data('name') // Extract info from data-* attributes
@@ -124,6 +204,79 @@
             modal.find(".deleteBtn").attr("data-id", id)
         });
 
+        /* 编辑模块展示前 */
+        $('#editModal').on('show.bs.modal', function (event) {
+            // 清空表单
+            $("#myForm").find("input[type='radio']").removeAttr("checked");
+            $("#myForm").find("input[name='name']").val("");
+            $("#photo").attr("src", "");
+
+            var modal = $(this)
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var id = button.data("id")
+            var type = button.data('type') // Extract info from data-* attributes
+            /* 区分是添加还是编辑 */
+            if (type == "add") { //添加
+                modal.find(".modal-title").text("Add Your Hero");
+                modal.find(".editOption").attr("data-type", type);
+            } else {// 编辑
+                modal.find(".modal-title").text("Hero Detail");
+                modal.find(".editOption").attr("data-type", type);
+                modal.find(".editOption").attr("data-id", id);
+                var id = button.data("id")
+                var herosData = JSON.parse(localStorage.getItem("herosData"));
+                for (var i = 0; i < herosData.length; i++) {
+                    if (id == herosData[i].id) {
+                        $("#myForm input[name='name']").val(herosData[i].name);
+                        if (herosData[i].gender == "男") $("#myForm #nan").attr("checked", true);
+                        if (herosData[i].gender == "女") $("#myForm #nv").attr("checked", true);
+                        $("#myForm #photo").attr("src", herosData[i].img);
+                    }
+                }
+            }
+        });
+
+        /* 图片上传 */
+        $("#img").on("change", function () {
+            var file = this.files[0];
+            var read = new FileReader() // 创建FileReader对像;
+            read.readAsDataURL(file) // 调用readAsDataURL方法读取文件;
+            read.onload = function () {
+                url = this.result;
+                $("#photo").attr("src", url);
+            }
+            // ----------
+            var formdata = new FormData();
+            formdata.append("name", "kk");
+            formdata.append("img", file);
+            // console.log(formdata);
+            // console.log(formdata.values());
+            // console.log(formdata.get("name"));
+            // console.log(formdata.get("img"));
+            // var data = $("form").serialize();
+            // console.log(data);
+
+            // 上传图片
+            $.ajax({
+                url: "/postUpload",
+                type: "POST",
+                data: formdata,
+                processData: false,
+                contentType: false,
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 1) {
+                        console.log(result);
+                        $("#photo").attr("src", "/images/" + result.path);
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        });
+
+        /* 删除数据 */
         $(document).delegate(".deleteBtn", "click", function (e) {
             e.preventDefault();
             var dataId = parseInt(this.getAttribute('data-id'));
@@ -150,16 +303,104 @@
             });
         });
 
-        $(document).delegate(".edit", "click", function (e) {
-            bootoast.toast({
-                message: 'Bootoast!',
-                type: 'success',
-                position: 'top',
-                icon: null,
-                timeout: 2,
-                animationDuration: 300,
-                dismissible: false
-            });
+        /* 添加和编辑操作 */
+        $(".editOption").on("click", function () {
+            var type = $(this).data("type");
+            var id = parseInt(this.getAttribute("data-id"));
+            /* 验证表单 */
+            if (!$("#myForm input[name='name']").val()) {
+                bootoast.toast({
+                    message: "The name cannot be empty!",
+                    type: 'warning',
+                    position: 'top',
+                    timeout: 2
+                });
+            }else if(!$("#myForm input:radio[name='gender']:checked").val()){
+                bootoast.toast({
+                    message: "Choose a gender please!",
+                    type: 'warning',
+                    position: 'top',
+                    timeout: 2
+                });
+            }else if(!$("#photo").attr("src")){
+                bootoast.toast({
+                    message: "Please pick a avatar !",
+                    type: 'warning',
+                    position: 'top',
+                    timeout: 2
+                });
+            }
+            /* ******* */
+            return;
+            if (type == "add") {
+                var data = $("form").serialize();
+                data = data + "&img=" + $("#photo").attr("src");
+                console.log(data);
+                $.ajax({
+                    url: "/add",
+                    type: "POST",
+                    data: data,
+                    dataType: "json",
+                    success: function (res) {
+                        console.log(res);
+                        if (res.code === 1) {
+                            bootoast.toast({
+                                message: res.msg,
+                                type: 'success',
+                                position: 'top',
+                                timeout: 2,
+                                animationDuration: 300
+                            });
+                            getList();
+                        } else {
+                            bootoast.toast({
+                                message: res.msg,
+                                type: 'dangerous',
+                                position: 'top',
+                                timeout: 2,
+                                animationDuration: 300
+                            });
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+            } else {// 编辑
+                var data = $("form").serialize();
+                data = "id=" + id + "&" + data + "&img=" + $("#photo").attr("src");
+                console.log(data);
+                $.ajax({
+                    url: "/edit",
+                    type: "POST",
+                    data: data,
+                    dataType: "json",
+                    success: function (res) {
+                        if (res.code == 1) {
+                            bootoast.toast({
+                                message: res.msg,
+                                type: 'success',
+                                position: 'top',
+                                icon: null,
+                                timeout: 2,
+                                animationDuration: 300,
+                                dismissible: false
+                            });
+                            getList();
+                        } else {
+                            bootoast.toast({
+                                message: res.msg,
+                                type: 'dangerous',
+                                position: 'top',
+                                icon: null,
+                                timeout: 2,
+                                animationDuration: 300,
+                                dismissible: false
+                            });
+                        }
+                    }
+                })
+            }
         })
     </script>
 </body>

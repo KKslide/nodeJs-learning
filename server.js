@@ -179,6 +179,39 @@ server.on('request', (request, response) => {
     }
     // 修改数据
     else if (url === "/edit" && method === "POST") {
-
+        var str = "";
+        request.on("data", (chunk) => {
+            str = str + chunk;
+        });
+        request.on("end", () => {
+            var obj = myurl.parse("?" + str, true).query;
+            console.log("第" + __line + "行, 修改数据：", obj);
+            console.log('需要修改的ID为', obj.id);
+            var changeID = obj.id;
+            fs.readFile(__dirname + "/data/data.json", (err, data) => {
+                if (err) return response.end("发生错误！稍后重试！");
+                var heroObj = JSON.parse(data.toString());
+                for (var i = 0; i < heroObj.heros.length; i++) {
+                    if (changeID == heroObj.heros[i].id) {
+                        heroObj.heros.splice(i, 1, obj);
+                    }
+                }
+                fs.writeFile(__dirname + "/data/data.json", JSON.stringify(heroObj, null, ""), (err) => {
+                    if (err) {
+                        var obj = {
+                            "code": 0,
+                            "msg": "修改失败,请联系客服"
+                        }
+                        return response.end(JSON.stringify(obj));
+                    } else {
+                        var obj = {
+                            "code": 1,
+                            "msg": "修改成功"
+                        }
+                        response.end(JSON.stringify(obj))
+                    }
+                })
+            })
+        })
     }
 });

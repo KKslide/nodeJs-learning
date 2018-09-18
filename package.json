@@ -8,6 +8,7 @@
     "blueimp-md5": "^2.10.0",
     "bootoast": "^1.0.1",
     "bootstrap": "^3.3.7",
+    "bootstrapvalidator": "^0.5.4",
     "express": "^4.16.2",
     "express-art-template": "^1.0.0",
     "express-session": "^1.15.6",
