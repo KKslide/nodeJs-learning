@@ -305,7 +305,7 @@
 
         /* 添加和编辑操作 */
         $(".editOption").on("click", function () {
-            var type = $(this).data("type");
+            var type = this.getAttribute("data-type");
             var id = parseInt(this.getAttribute("data-id"));
             /* 验证表单 */
             if (!$("#myForm input[name='name']").val()) {
@@ -315,6 +315,7 @@
                     position: 'top',
                     timeout: 2
                 });
+                return false;
             }else if(!$("#myForm input:radio[name='gender']:checked").val()){
                 bootoast.toast({
                     message: "Choose a gender please!",
@@ -322,6 +323,7 @@
                     position: 'top',
                     timeout: 2
                 });
+                return false;
             }else if(!$("#photo").attr("src")){
                 bootoast.toast({
                     message: "Please pick a avatar !",
@@ -329,9 +331,9 @@
                     position: 'top',
                     timeout: 2
                 });
+                return false;
             }
             /* ******* */
-            return;
             if (type == "add") {
                 var data = $("form").serialize();
                 data = data + "&img=" + $("#photo").attr("src");
@@ -351,6 +353,7 @@
                                 timeout: 2,
                                 animationDuration: 300
                             });
+                            $('#editModal').modal('hide')
                             getList();
                         } else {
                             bootoast.toast({
@@ -386,6 +389,7 @@
                                 animationDuration: 300,
                                 dismissible: false
                             });
+                            $('#editModal').modal('hide')
                             getList();
                         } else {
                             bootoast.toast({

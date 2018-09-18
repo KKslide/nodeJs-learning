@@ -120,7 +120,7 @@ server.on('request', (request, response) => {
             fs.readFile(__dirname + "/data/data.json", (err, data) => {
                 if (err) return response.end("发生错误！稍后重试！");
                 var heroObj = JSON.parse(data.toString());
-                obj.id = heroObj.heros[heroObj.heros.length - 1].id + 1;
+                obj.id = parseInt(heroObj.heros[heroObj.heros.length - 1].id) + 1;
                 heroObj.heros.push(obj);
                 fs.writeFile(__dirname + "/data/data.json", JSON.stringify(heroObj, null, ""), (err) => {
                     if (err) {
@@ -147,14 +147,14 @@ server.on('request', (request, response) => {
             str += chunk;
         });
         request.on("end", () => {
-            var dataID = +str.split("=")[1];
+            var dataID = parseInt(str.split("=")[1]);
             console.log(dataID);
             fs.readFile(__dirname + "/data/data.json", (err, data) => {
                 if (err) return response.end("发生错误！稍后重试！");
                 var heroObj = JSON.parse(data.toString());
                 console.log("删除前-----", heroObj.heros);
                 for (var i = 0; i < heroObj.heros.length; i++) {
-                    if (heroObj.heros[i].id === dataID) {
+                    if (parseInt(heroObj.heros[i].id) === dataID) {
                         heroObj.heros.splice(i, 1);
                     }
                 }
