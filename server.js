@@ -35,12 +35,6 @@ server.on('request', (request, response) => {
     var method = request.method;
     console.log('URL请求:' + url, '请求方式:' + method);
     if (url === '/' || url === '/index') {
-        // 读取文件方式
-        // fs.readFile(__dirname + '/data/data.json', (err, data) => {
-        //     if (err) return response.end("发生错误！稍后重试！");
-        //     var html = template(__dirname + "/views/index.html", JSON.parse(data.toString()));
-        //     response.end(html);
-        // });
         // 接口方式,返回json数据
         fs.readFile(__dirname + "/views/index.html", (err, data) => {
             if (err) return response.end("发生错误！稍后重试！");
@@ -78,18 +72,12 @@ server.on('request', (request, response) => {
     }
     // 图片上传
     else if (url === "/postUpload" && method === "POST") {
-        // var str = "";
-        // res.on("data", (chunk) => {
-        //     str += chunk;
-        // });
-        // console.log("第"+__line+"行，chunk春哥是什么东西： ", str);
         var form = new formidable.IncomingForm(); // 使用formidable
         form.uploadDir = "./images"; // 创建文件目录
         form.keepExtentsions = true; // 保留扩展名
         form.parse(request, function (err, fields, files) {
             console.log(fields);
             console.log('--------------------');
-            console.log(files);
             if (err) {
                 var obj = {
                     "code": 0,

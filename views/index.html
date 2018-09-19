@@ -15,8 +15,8 @@
             text-decoration: none;
         }
         .hero-list img {
-            /* width: 50px; */
-            height: 50px;
+            width: 50px;
+            /* height: 50px; */
             display: block
         }
 
@@ -43,6 +43,9 @@
         .modal-body form img{
             width: 100px;
         }
+        #tbody{
+            min-width: 375px;
+        }
     </style>
 </head>
 
@@ -58,7 +61,7 @@
     </header>
     <div class="container hero-list">
         <a class="btn btn-success pull-right" href="javacript:void(0);" data-toggle="modal" data-target="#editModal"
-            data-type="add">Add</a>
+            data-type="add" onclick="clearForm()">Add</a>
         <table class="table table-hover">
             <thead>
                 <th>NO</th>
@@ -79,7 +82,9 @@
                             <a href="javascript:;" class="edit">
                                 <!-- onclick="Edit({{$value.id}})" -->
                                 <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal" 
-                                data-id="{{$value.id}}" data-type="edit">Edit</button>
+                                data-id="{{$value.id}}" data-type="edit"
+                                onclick="clearForm()"
+                                >Edit</button>
                             </a>
                             &nbsp;
                             <a href="javascript:;" class="del">
@@ -135,8 +140,8 @@
                             <tr>
                                 <td class="col-sm-3 col-xs-3 col md-3">性别：</td>
                                 <td class="col-sm-6 col-xs-6 col md-6" style="text-align:left;"><input id="nan" name="gender"
-                                        value="男" type="radio"><label for="nan">男</label>
-                                    <input name="gender" value="女" type="radio" id="nv"><label for="nv">女</label></td>
+                                        value="man" type="radio"><label for="nan">男</label>
+                                    <input name="gender" value="woman" type="radio" id="nv"><label for="nv">女</label></td>
                             </tr>
                             <tr>
                                 <td class="col-sm-3 col-xs-3 col md-3">头像：</td>
@@ -171,16 +176,9 @@
     <!-- <script src="../node_modules/bootstrapvalidator/dist/js/language/zh_CN.js"></script> -->
     <script>
         $(function () {
-            // $("#myForm").each(function () {
-            //     var $form = $(this);
-            //     $form.bootstrapValidator();
-            //     $form.on('success.form.bv', function (e) {
-            //         // Prevent form submission
-            //         e.preventDefault();
-            //     });
-            // })
             getList();
         });
+        /* 获取数据 */
         function getList() {
             $.ajax({
                 url: "/page",
@@ -192,6 +190,13 @@
                     $("#tbody").html(html);
                 }
             })
+        };
+        function clearForm() {
+            $('input[name="gender"]').each(function () {
+                $(this).prop("checked", false);
+            });
+            $("#myForm").find("input[type='text']").val("");
+            $("#myForm").find("photo").attr("src", "");
         }
 
         /* 删除模块展示前 */
@@ -228,8 +233,8 @@
                 for (var i = 0; i < herosData.length; i++) {
                     if (id == herosData[i].id) {
                         $("#myForm input[name='name']").val(herosData[i].name);
-                        if (herosData[i].gender == "男") $("#myForm #nan").attr("checked", true);
-                        if (herosData[i].gender == "女") $("#myForm #nv").attr("checked", true);
+                        if (herosData[i].gender == "man") $("#myForm #nan").prop("checked", true);
+                        if (herosData[i].gender == "woman") $("#myForm #nv").prop("checked", true);
                         $("#myForm #photo").attr("src", herosData[i].img);
                     }
                 }
@@ -249,13 +254,9 @@
             var formdata = new FormData();
             formdata.append("name", "kk");
             formdata.append("img", file);
-            // console.log(formdata);
-            // console.log(formdata.values());
-            // console.log(formdata.get("name"));
-            // console.log(formdata.get("img"));
-            // var data = $("form").serialize();
-            // console.log(data);
-
+            formdata.append("last",$("#photo").attr("last"));
+            console.log(formdata);
+            return;
             // 上传图片
             $.ajax({
                 url: "/postUpload",
@@ -316,7 +317,7 @@
                     timeout: 2
                 });
                 return false;
-            }else if(!$("#myForm input:radio[name='gender']:checked").val()){
+            } else if (!$("#myForm input:radio[name='gender']:checked").val()) {
                 bootoast.toast({
                     message: "Choose a gender please!",
                     type: 'warning',
@@ -324,7 +325,7 @@
                     timeout: 2
                 });
                 return false;
-            }else if(!$("#photo").attr("src")){
+            } else if (!$("#photo").attr("src")) {
                 bootoast.toast({
                     message: "Please pick a avatar !",
                     type: 'warning',
@@ -405,7 +406,8 @@
                     }
                 })
             }
-        })
+        });
+
     </script>
 </body>
 
