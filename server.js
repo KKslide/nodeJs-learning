@@ -4,24 +4,7 @@ var template = require("art-template");
 var formidable = require("formidable");
 var path = require("path");
 var myurl = require("url");
-
-Object.defineProperty(global, '__stack', {
-    get: function () {
-        var orig = Error.prepareStackTrace;
-        Error.prepareStackTrace = function (_, stack) { return stack; };
-        var err = new Error;
-        Error.captureStackTrace(err, arguments.callee);
-        var stack = err.stack;
-        Error.prepareStackTrace = orig;
-        return stack;
-    }
-});
-
-Object.defineProperty(global, '__line', {
-    get: function () {
-        return __stack[1].getLineNumber();
-    }
-});
+var line = require("./lib/line.js");
 
 // 创建服务器
 var server = http.createServer();
