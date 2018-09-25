@@ -1,4 +1,5 @@
 /node_modules
 heros.sql
-/images/upload_*
+/version-*/images/upload_*
 /font-awesome-demo
+/version-*/node_modules
