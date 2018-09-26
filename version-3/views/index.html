@@ -119,7 +119,7 @@
                 </div>
                 <div class="modal-body" style="text-align:center;">
                     <style> #myform .fr{float: right;} #myForm>.table{margin-bottom: 0;}</style>
-                    <form enctype="multipart/form-data" id="myForm" class="required-validate">
+                    <form enctype="multipart/form-data" id="myForm" class="required-validate" onkeydown="if(event.keyCode==13){return false}">
                         <table class="table table-hover">
                             <tr>
                                 <td class="col-sm-3 col-xs-3 col md-3">姓名：</td>
