@@ -8,15 +8,6 @@ var line = require("./line.js");
 
 var myModule = require("./myModule.js");
 
-// 静态文件配置
-module.exports.getStatic = function (request, response) {
-    var url = request.url;
-    fs.readFile(nowPath + url, (err, data) => {
-        if (err) return response.end("发生错误！稍后重试！");
-        response.end(data);
-    });
-}
-
 // 首页
 module.exports.getIndexPage = function (request, response) {
     fs.readFile(nowPath + "/views/index.html", (err, data) => {
@@ -37,17 +28,8 @@ module.exports.loadIndex = function (request, response) {
             response.end(JSON.stringify(obj));
         } else {
             console.log('欧耶 成功了！');
-            response.end(data);
+            response.end(JSON.stringify(data));
         }
-    });
-}
-
-// icon图标
-module.exports.getIcon = function (request, response) {
-    var url = request.url;
-    fs.readFile(nowPath + url, (err, data) => {
-        if (err) return response.end("发生错误！稍后重试！");
-        response.end(data.toString());
     });
 }
 
@@ -83,8 +65,8 @@ module.exports.addOption = function (request, response) {
     request.on("end", () => {
         var obj = myurl.parse("?" + str, true).query;
         myModule.doAdd(obj, (err, data) => {
-            if (err) return response.end(JSON.stringify(err));
-            response.end(JSON.stringify(data));
+            if (err) return response.end(JSON.stringify({ "code": 0, "msg": "添加失败" }));
+            response.end(JSON.stringify({ "code": 1, "msg": "添加成功" }));
         })
     })
 }
@@ -99,9 +81,9 @@ module.exports.delOption = function (request, response) {
         var dataID = parseInt(str.split("=")[1]);
         myModule.doDel(dataID, (err, data) => {
             if (err) {
-                response.end(err);
+                response.end(JSON.stringify({ "code": 0, "msg": "删除失败" }));
             } else {
-                response.end(data);
+                response.end(JSON.stringify({ "code": 1, "msg": "删除成功" }));
             }
         })
     })
@@ -117,9 +99,9 @@ module.exports.editOptin = function (request, response) {
         var obj = myurl.parse("?" + str, true).query;
         myModule.doEdit(obj, (err, data) => {
             if (err) {
-                response.end(err);
+                response.end(JSON.stringify({ "code": 0, "msg": "修改失败" }));
             } else {
-                response.end(data);
+                response.end(JSON.stringify({ "code": 1, "msg": "修改成功" }));
             }
         })
     });

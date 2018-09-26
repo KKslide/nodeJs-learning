@@ -1,4 +1,3 @@
-
 $(function () {
     getList();
 });
@@ -8,9 +7,11 @@ function getList() {
         url: "/page",
         dataType: "json",
         success: function (res) {
-            console.log(res);
-            window.localStorage.setItem("herosData", JSON.stringify(res.heros));
-            var html = template("list", res);
+            var result = {};
+            result.heros = res;
+            console.log(result.heros);
+            window.localStorage.setItem("herosData", JSON.stringify(res));
+            var html = template("list", result);
             $("#tbody").html(html);
         }
     })
@@ -188,7 +189,7 @@ $(".editOption").on("click", function () {
                 }
             },
             error: function (err) {
-                console.log(err);
+                console.log('error!!!',err);
             }
         })
     } else {// 编辑
