@@ -3,4 +3,6 @@ heros.sql
 /version-*/images/upload_*
 /font-awesome-demo
 /version-*/node_modules
-/version-*/data
+/version-*/data/data.json
+package-lock.json
+package.json
