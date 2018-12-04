@@ -32,7 +32,7 @@ module.exports.doAdd = function (newObj, callback) {
             callback(err);
         } else {
             var heroObj = JSON.parse(data.toString());
-            newObj.id = parseInt(heroObj.heros[heroObj.heros.length - 1].id) + 1;
+            newObj.id = heroObj.heros.length !== 0 ? parseInt(heroObj.heros[heroObj.heros.length - 1].id) + 1 : 1;
             heroObj.heros.push(newObj);
             fs.writeFile(nowPath + "/data/data.json", JSON.stringify(heroObj, null, ""), (err) => {
                 if (err) {
@@ -92,7 +92,7 @@ module.exports.doEdit = function (newObj, callback) {
             if (parseInt(newObj.id) === parseInt(heroObj.heros[i].id)) {
                 heroObj.heros[i] = newObj;
                 break;
-            } 
+            }
         }
         fs.writeFile(nowPath + "/data/data.json", JSON.stringify(heroObj, null, ""), (err) => {
             if (err) {
