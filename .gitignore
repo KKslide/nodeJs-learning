@@ -5,4 +5,3 @@ heros.sql
 /version-*/node_modules
 /version-*/data/data.json
 package-lock.json
-package.json

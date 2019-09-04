@@ -1,0 +1,27 @@
+{
+  "name": "version-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "art-template": "^4.12.2",
+    "bootoast": "^1.0.1",
+    "blueimp-md5": "^2.10.0",
+    "bootstrap": "^3.3.7",
+    "bootstrapvalidator": "^0.5.4",
+    "express-art-template": "^1.0.0",
+    "express-session": "^1.15.6",
+    "express": "^4.16.2",
+    "formidable": "^1.1.1",
+    "jquery": "^3.2.1",
+    "moment": "^2.19.3",
+    "mysql": "^2.15.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
