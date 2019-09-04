@@ -29,6 +29,22 @@ server.listen(3000, () => {
     console.log('http:127.0.0.1:3000');
 });
 
+// 判断有没有data文件夹存放数据
+fs.exists("./data", function (exists) {
+    if (!exists) { // 文件夹不存在
+        fs.mkdir("./data", (err) => {
+            if (err) {
+                console.log(err);
+                return false;
+            } else {
+                fs.appendFile("./data/data.json", '{"heros":[]}', (err) => {
+                    if (err) return console.log(err);
+                })
+            }
+        })
+    }
+});
+
 // 监听请求
 server.on('request', (request, response) => {
     var url = request.url;
@@ -76,8 +92,8 @@ server.on('request', (request, response) => {
         form.uploadDir = "./images"; // 创建文件目录
         form.keepExtentsions = true; // 保留扩展名
         form.parse(request, function (err, fields, files) {
-            console.log(fields);
-            console.log('--------------------');
+            // console.log(fields);
+            // console.log('--------------------');
             if (err) {
                 var obj = {
                     "code": 0,
@@ -102,13 +118,18 @@ server.on('request', (request, response) => {
         });
         request.on("end", () => {
             // console.log(str);
-            console.log('行数：' + __line + '---' + str);
+            // console.log('行数：' + __line + '---' + str);
             var obj = myurl.parse("?" + str, true).query;
-            console.log(obj);
+
             fs.readFile(__dirname + "/data/data.json", (err, data) => {
                 if (err) return response.end("发生错误！稍后重试！");
                 var heroObj = JSON.parse(data.toString());
-                obj.id = parseInt(heroObj.heros[heroObj.heros.length - 1].id) + 1;
+                console.log(heroObj);
+                if (heroObj.heros.length == 0) {
+                    obj.id = 1
+                } else {
+                    obj.id = parseInt(heroObj.heros[heroObj.heros.length - 1].id) + 1;
+                }
                 heroObj.heros.push(obj);
                 fs.writeFile(__dirname + "/data/data.json", JSON.stringify(heroObj, null, ""), (err) => {
                     if (err) {
