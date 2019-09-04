@@ -7,8 +7,7 @@ var connection = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "root",
-    // database: "nodejs-learning", // 在家
-    database: "02nodejs_learning" // 在公司
+    database: "nodejs-learning", // 在家
 });
 connection.connect();
 
